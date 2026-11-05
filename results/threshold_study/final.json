@@ -1,0 +1,107 @@
+{
+  "M1:clean->clean": {
+    "threshold": 0.4118,
+    "far": {
+      "value": 0.0154,
+      "low": 0.0131,
+      "high": 0.018
+    },
+    "frr": {
+      "value": 0.0454,
+      "low": 0.0217,
+      "high": 0.0776
+    }
+  },
+  "M1:clean->narrowband": {
+    "threshold": 0.4118,
+    "far": {
+      "value": 0.0036,
+      "low": 0.002,
+      "high": 0.0062
+    },
+    "frr": {
+      "value": 0.5799,
+      "low": 0.5226,
+      "high": 0.6434
+    }
+  },
+  "M1:narrowband->clean": {
+    "threshold": 0.3476,
+    "far": {
+      "value": 0.0483,
+      "low": 0.0425,
+      "high": 0.0544
+    },
+    "frr": {
+      "value": 0.0237,
+      "low": 0.0059,
+      "high": 0.0512
+    }
+  },
+  "M1:narrowband->narrowband": {
+    "threshold": 0.3476,
+    "far": {
+      "value": 0.0152,
+      "low": 0.0104,
+      "high": 0.0213
+    },
+    "frr": {
+      "value": 0.3649,
+      "low": 0.3084,
+      "high": 0.43
+    }
+  },
+  "M3:clean->clean": {
+    "threshold": 2.2985,
+    "far": {
+      "value": 0.0097,
+      "low": 0.0086,
+      "high": 0.0109
+    },
+    "frr": {
+      "value": 0.0434,
+      "low": 0.0198,
+      "high": 0.0754
+    }
+  },
+  "M3:clean->narrowband": {
+    "threshold": 2.2985,
+    "far": {
+      "value": 0.0038,
+      "low": 0.0026,
+      "high": 0.0052
+    },
+    "frr": {
+      "value": 0.4931,
+      "low": 0.4314,
+      "high": 0.5623
+    }
+  },
+  "M3:narrowband->clean": {
+    "threshold": 1.6818,
+    "far": {
+      "value": 0.0204,
+      "low": 0.0187,
+      "high": 0.0222
+    },
+    "frr": {
+      "value": 0.0316,
+      "low": 0.0116,
+      "high": 0.059
+    }
+  },
+  "M3:narrowband->narrowband": {
+    "threshold": 1.6818,
+    "far": {
+      "value": 0.009,
+      "low": 0.0064,
+      "high": 0.0121
+    },
+    "frr": {
+      "value": 0.3984,
+      "low": 0.3438,
+      "high": 0.4643
+    }
+  },
+  "confirmed": true
+}

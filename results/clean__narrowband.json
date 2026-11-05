@@ -1,0 +1,70 @@
+{
+  "dataset": "commonvoice:el",
+  "model": "speechbrain/spkrec-ecapa-voxceleb",
+  "enroll_condition": "clean",
+  "probe_condition": "narrowband",
+  "protocol": {
+    "n_enroll": 3,
+    "min_probes": 2,
+    "max_probes": 5,
+    "calib_fraction": 0.5,
+    "seed": 20261105,
+    "splits": {
+      "calib": {
+        "speakers": 118,
+        "probes": 508,
+        "target_trials": 508,
+        "nontarget_trials": 59436
+      },
+      "test": {
+        "speakers": 117,
+        "probes": 507,
+        "target_trials": 507,
+        "nontarget_trials": 58812
+      }
+    }
+  },
+  "metrics": {
+    "test_trials": {
+      "target": 507,
+      "nontarget": 58812
+    },
+    "test_eer": {
+      "value": 0.0986,
+      "low": 0.0809,
+      "high": 0.1207
+    },
+    "test_score_means": {
+      "target": 0.3865,
+      "nontarget": 0.1268
+    },
+    "operating_points": {
+      "eer_calib": {
+        "threshold": 0.2305,
+        "far": {
+          "value": 0.1364,
+          "low": 0.1164,
+          "high": 0.1592
+        },
+        "frr": {
+          "value": 0.0631,
+          "low": 0.035,
+          "high": 0.0968
+        }
+      },
+      "far0.01_calib": {
+        "threshold": 0.3476,
+        "far": {
+          "value": 0.0152,
+          "low": 0.0104,
+          "high": 0.0213
+        },
+        "frr": {
+          "value": 0.3649,
+          "low": 0.3084,
+          "high": 0.43
+        }
+      }
+    }
+  }
+}

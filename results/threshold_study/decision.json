@@ -1,0 +1,59 @@
+{
+  "m0_violation_rate": {
+    "clean": 0.42,
+    "narrowband": 0.445
+  },
+  "violation_rate_n80": {
+    "M1": {
+      "clean": 0.42,
+      "narrowband": 0.45
+    },
+    "M2": {
+      "clean": 0.225,
+      "narrowband": 0.19
+    },
+    "M3": {
+      "clean": 0.415,
+      "narrowband": 0.405
+    },
+    "M4": {
+      "clean": 0.22,
+      "narrowband": 0.19
+    }
+  },
+  "meets_safety": {
+    "M1": {
+      "clean": true,
+      "narrowband": true
+    },
+    "M2": {
+      "clean": true,
+      "narrowband": true
+    },
+    "M3": {
+      "clean": true,
+      "narrowband": true
+    },
+    "M4": {
+      "clean": true,
+      "narrowband": true
+    }
+  },
+  "mean_median_frr_n80": {
+    "M1": 0.20062829086727593,
+    "M2": 0.22630161844229185,
+    "M3": 0.18069181758434352,
+    "M4": 0.20543505228190323
+  },
+  "recommended": "M3",
+  "min_calibration_speakers": 60,
+  "min_calibration_speakers_by_condition": {
+    "clean": 20,
+    "narrowband": 60
+  },
+  "transfer_violation_rate": {
+    "clean->narrowband": 0.01,
+    "narrowband->clean": 1.0
+  },
+  "recalibrate_per_channel": true
+}
