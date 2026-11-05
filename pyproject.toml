@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "voice-verification"
+version = "0.1.0"
+description = "1:1 speaker verification service: enroll a user's voice, then verify that a caller is who they claim to be."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-multipart>=0.0.9",
+    "pydantic-settings>=2.2",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "soundfile>=0.12",
+    "cryptography>=42",
+    "psycopg[binary,pool]>=3.1",
+]
+
+[project.optional-dependencies]
+# The real speaker-embedding model. Kept optional so the core and the test
+# suite install without PyTorch.
+ecapa = [
+    "torch>=2.1",
+    "torchaudio>=2.1",
+    "speechbrain>=1.0",
+]
+eval = [
+    "pandas>=2",
+]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+vv-keygen = "voice_verification.crypto:main"
+vv-calibrate = "voice_verification.calibrate:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/voice_verification"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.File"]

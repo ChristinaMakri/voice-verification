@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: vv
+          POSTGRES_PASSWORD: vv
+          POSTGRES_DB: voiceprints
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U vv -d voiceprints"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    env:
+      VV_TEST_DATABASE_URL: postgresql://vv:vv@localhost:5432/voiceprints
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.11 && uv pip install -e '.[dev,eval]'
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync pytest -v

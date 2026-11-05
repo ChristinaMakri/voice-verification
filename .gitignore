@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+
+# secrets and local state
+.env
+.models/
+
+# never commit voice recordings
+data/
+*.wav
+*.flac
+*.ogg
+*.mp3
