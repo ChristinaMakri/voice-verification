@@ -30,6 +30,102 @@ caller ───► your app / voice bot ─────────────
 Proof of concept. It does a useful job and is tested, but read
 [Limitations](#limitations-and-safe-use) before you rely on it.
 
+## Results
+
+All numbers come from Greek Common Voice 27.0 (235 speakers, read speech)
+unless stated otherwise. They are measured on **held-out test speakers**,
+with 95% speaker-bootstrap intervals in brackets. Full method and caveats:
+[threshold study](docs/threshold-study.md) and
+[external check](docs/external-check-cypriot.md).
+
+### 1. How well does the model separate voices?
+
+Enrollment is always clean. The probe channel varies; the speakers and trials
+are the same in every row.
+
+| Probe channel | EER | FRR at FAR ≈ 1.5% | Mean score, genuine / impostor |
+|---|---|---|---|
+| clean | **3.0%** [1.9–5.1] | 4.5% | 0.64 / 0.16 |
+| telephone band (300–3400 Hz) | **9.9%** [8.1–12.1] | 36% | 0.39 / 0.13 |
+| telephone band + G.711 | **10.5%** [8.5–12.8] | 37% | 0.38 / 0.13 |
+
+- An English-trained model works on Greek: about 3% EER on clean audio.
+- Telephone audio triples the errors. The cause is the lost bandwidth, not
+  the codec, and it shows up as lower **genuine** scores (channel mismatch
+  with the clean voiceprint). Impostor scores hardly change.
+
+### 2. Where should the threshold be?
+
+| Threshold | FAR, clean (target 1%) |
+|---|---|
+| Common default 0.25 (raw cosine) | **18.5%** [16.8–20.3] |
+| Raw score, calibrated for FAR 1% (M1) | 1.54% [1.31–1.80] |
+| **AS-norm, calibrated for FAR 1% (M3, recommended)** | **0.97%** [0.86–1.09] |
+
+The method was chosen by **pre-registered** rules on development speakers
+only, then confirmed once on a 117-speaker lockbox:
+
+| Calibrated on → used on | M1 (raw) FAR | M3 (AS-norm) FAR | M3 FRR |
+|---|---|---|---|
+| clean → clean | 1.54% | **0.97%** | 4.3% |
+| narrowband → narrowband | 1.52% | **0.90%** | 39.8% |
+| narrowband → clean | **4.83%** | 2.04% | 3.2% |
+| clean → narrowband | 0.36% | 0.38% | 49.3% |
+
+- Raw-score thresholds overshoot on new speakers. AS-norm held the target.
+- **Using a threshold on the wrong channel is the most dangerous mistake:**
+  FAR rises up to about 5× the target, and nothing reports it.
+
+### 3. How many speakers does a calibration need?
+
+Repeated calibrations on n development speakers, each evaluated on 38 others
+(raw score, clean, target 1%):
+
+| Calibration speakers | 10 | 20 | 40 | 60 | 80 |
+|---|---|---|---|---|---|
+| Median FAR | 1.12% | 0.93% | 0.94% | 0.97% | 0.94% |
+| Worst 10% of calibrations | **3.28%** | 1.91% | 1.50% | 1.37% | 1.35% |
+
+With 10 speakers, one calibration in ten ends up above 3× the target. Gains
+are small beyond about 40.
+
+### 4. Does the service reproduce the study?
+
+The test trials were routed through the service's own decision code, with
+automatic channel detection:
+
+| | Study (M3) | Service |
+|---|---|---|
+| clean: FAR / FRR | 0.97% / 4.3% | 1.00% / 4.1% |
+| narrowband: FAR / FRR | 0.90% / 39.8% | 0.90% / 39.8% |
+
+Channel detection was correct on 100% of simulated telephone clips and 99.9%
+of G.711 clips. It flagged 5% of "clean" clips, which turned out to be
+genuinely band-limited, so the service routes them to the narrowband
+threshold. That explains the small clean-audio difference.
+
+### 5. Does it carry over to another domain?
+
+The system was frozen on Greek Common Voice and applied unchanged to
+**10 Cypriot Greek speakers** answering spontaneously (about 27 s clips):
+
+| Probe channel | FAR (target 1%) | FRR |
+|---|---|---|
+| clean | 7.1% [4.6–9.6] | 1.5% |
+| telephone band | 6.6% [2.2–12.5] | 2.5% |
+
+The pre-registered outcome is **inconclusive**, because 10 speakers are too
+few. The indication is that a calibration does not carry over to a new
+domain: thresholds and cohort must be rebuilt for each deployment. Channel
+detection was 400/400 correct.
+
+### What these results do *not* show
+
+Gender or age differences (19 usable female speakers), absolute error rates
+for production, real phone networks (codecs are simulated) and conversational
+speech in standard Greek. See [What this evaluation can and cannot tell
+you](#what-this-evaluation-can-and-cannot-tell-you).
+
 ## Quick start
 
 ```bash
