@@ -15,6 +15,7 @@ from .errors import AudioError
 class Audio:
     samples: np.ndarray  # float32, mono
     sample_rate: int
+    source_sample_rate: int  # rate of the uploaded file, before resampling
 
     @property
     def duration_s(self) -> float:
@@ -42,7 +43,11 @@ def load_audio(data: bytes, target_sr: int, max_seconds: float) -> Audio:
     if sr != target_sr:
         g = gcd(sr, target_sr)
         mono = resample_poly(mono, target_sr // g, sr // g)
-    return Audio(samples=np.ascontiguousarray(mono, dtype=np.float32), sample_rate=target_sr)
+    return Audio(
+        samples=np.ascontiguousarray(mono, dtype=np.float32),
+        sample_rate=target_sr,
+        source_sample_rate=sr,
+    )
 
 
 def speech_seconds(

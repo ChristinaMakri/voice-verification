@@ -22,6 +22,7 @@ services:
       - "8000:8000"
     volumes:
       - models:/models
+      - ./config:/config:ro   # calibration.json + cohort.npz (never commit them)
     depends_on:
       db:
         condition: service_healthy

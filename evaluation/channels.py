@@ -8,21 +8,16 @@ packet loss, echo cancellation, AGC and handset effects that are not modelled.
 from collections.abc import Callable
 
 import numpy as np
-from scipy.signal import butter, resample_poly, sosfiltfilt
+
+from voice_verification.channel import simulate_narrowband
 
 SR = 16000
 Condition = Callable[[np.ndarray], np.ndarray]
 
 
 def narrowband(x: np.ndarray) -> np.ndarray:
-    """Telephone band: 16 kHz -> 8 kHz, 300-3400 Hz band-pass, back to 16 kHz.
-
-    The embedding model expects 16 kHz, which is what a deployed service would
-    also do with phone audio; the upsampling restores the rate, not the lost band.
-    """
-    x8 = resample_poly(x, 1, 2)
-    sos = butter(6, [300, 3400], btype="bandpass", fs=8000, output="sos")
-    return resample_poly(sosfiltfilt(sos, x8), 2, 1).astype(np.float32)
+    """Telephone band (300-3400 Hz at 8 kHz); the service's own implementation."""
+    return simulate_narrowband(x, SR)
 
 
 def mulaw_8bit(x: np.ndarray, mu: float = 255.0) -> np.ndarray:

@@ -261,3 +261,16 @@ Reading the results:
 Scope: one model (ECAPA-VoxCeleb), one language and dataset (Greek Common
 Voice, read speech), simulated telephone channels, α = 1%. See the README
 limitations.
+
+## Post-study observation (not part of the pre-registered analysis)
+
+While the method was being moved into the service, the channel detector was
+run on all 1,015 probe clips. Its cut-off had been fixed in advance from the
+telephone band. It flagged 53 "clean" clips (5.2%, from 24 speakers) as
+narrowband. Every one of them has 99.9% of its energy below 3.4 kHz, so they
+are genuinely band-limited recordings (likely headsets in call mode), not
+detector errors. The study's `clean` condition therefore contains a small
+share of telephone-like audio. This does not change any conclusion. When the
+test trials are routed through the service's own code, with automatic channel
+detection, the result is FAR 1.00% / FRR 4.1% on clean audio and 0.90% / 39.8%
+on narrowband. The study reported 0.97% / 4.3% and 0.90% / 39.8%.

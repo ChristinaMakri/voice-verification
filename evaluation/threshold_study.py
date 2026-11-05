@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from voice_verification.scoring import centroid
+from voice_verification.scoring import asnorm, centroid, cohort_stats
 
 from .embed import EmbeddingCache
 from .manifest import load_commonvoice
@@ -72,21 +72,6 @@ def conservative_threshold(
     return float(np.quantile(th, 0.95))
 
 
-# --- AS-norm --------------------------------------------------------------------
-def cohort_stats(emb: np.ndarray, cohort: np.ndarray, k: int = K_COHORT) -> np.ndarray:
-    """Mean and std of each row's top-k cosine scores against the cohort -> (n, 2)."""
-    s = emb @ cohort.T
-    top = -np.sort(-s, axis=1)[:, :k]
-    return np.stack([top.mean(axis=1), top.std(axis=1)], axis=1)
-
-
-def asnorm(score: np.ndarray, model_stats: np.ndarray, probe_stats: np.ndarray) -> np.ndarray:
-    return 0.5 * (
-        (score - model_stats[:, 0]) / model_stats[:, 1]
-        + (score - probe_stats[:, 0]) / probe_stats[:, 1]
-    )
-
-
 # --- trials as flat arrays ------------------------------------------------------
 @dataclass
 class TrialArrays:
@@ -116,7 +101,7 @@ def build_trial_arrays(
     }
 
     model_mat = np.stack([models[s] for s in speakers])
-    model_stats = cohort_stats(model_mat, cohort)
+    model_stats = cohort_stats(model_mat, cohort, K_COHORT)
     m_idx = t.model.map(index).to_numpy()
 
     probe_utts = np.array(sorted(set(t.probe_utt)))
@@ -129,7 +114,7 @@ def build_trial_arrays(
         raw = np.einsum("ij,ij->i", model_mat[m_idx], probe_mat[p_idx])
         scores[(cond, "raw")] = raw
         scores[(cond, "asnorm")] = asnorm(
-            raw, model_stats[m_idx], cohort_stats(probe_mat, cohort)[p_idx]
+            raw, model_stats[m_idx], cohort_stats(probe_mat, cohort, K_COHORT)[p_idx]
         )
 
     return TrialArrays(

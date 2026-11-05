@@ -12,8 +12,14 @@ class Settings(BaseSettings):
     # Clients must send this in the X-API-Key header.
     api_key: str
 
-    # Cosine-similarity acceptance threshold. The default suits ECAPA on clean
-    # wideband speech; calibrate it on your own channel with `vv-calibrate`.
+    # Per-channel thresholds and score normalisation come from a calibration
+    # file (`vv-calibrate`) and, for AS-norm, its cohort (`vv-build-cohort`).
+    calibration_path: str | None = None
+    cohort_path: str | None = None
+    # Without a calibration file /verify refuses to answer (503), unless this
+    # is set for development. It then uses the raw cosine `threshold` below,
+    # which is NOT safe: 0.25 accepted 18.5% of impostors on Greek Common Voice.
+    allow_uncalibrated: bool = False
     threshold: float = 0.25
 
     sample_rate: int = 16000

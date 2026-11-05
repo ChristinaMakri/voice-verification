@@ -22,3 +22,7 @@ class NotEnrolled(VerificationError):
 
 class EnrollmentLimit(VerificationError):
     status_code = 409
+
+
+class NotCalibrated(VerificationError):
+    status_code = 503

@@ -40,7 +40,8 @@ dev = [
 
 [project.scripts]
 vv-keygen = "voice_verification.crypto:main"
-vv-calibrate = "voice_verification.calibrate:main"
+vv-calibrate = "voice_verification.calibration:main"
+vv-build-cohort = "voice_verification.cohort:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/voice_verification"]

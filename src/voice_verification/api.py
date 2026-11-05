@@ -16,14 +16,20 @@ _api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
 def _build_default_service(settings: Settings) -> VerificationService:
+    from .calibration import load_scoring_config
     from .embedding import EcapaEmbedder
     from .storage import PostgresStore
 
+    cipher = VoiceprintCipher(settings.encryption_key)
+    embedder = EcapaEmbedder(settings.model_cache_dir, settings.device)
+    cohort, calibration = load_scoring_config(settings, cipher, embedder.model_id)
     return VerificationService(
         settings=settings,
-        embedder=EcapaEmbedder(settings.model_cache_dir, settings.device),
+        embedder=embedder,
         store=PostgresStore(settings.database_url),
-        cipher=VoiceprintCipher(settings.encryption_key),
+        cipher=cipher,
+        calibration=calibration,
+        cohort=cohort,
     )
 
 
@@ -62,8 +68,14 @@ def create_app(service: VerificationService | None = None) -> FastAPI:
         return JSONResponse(status_code=exc.status_code, content={"detail": str(exc)})
 
     @app.get("/health")
-    def health() -> dict:
-        return {"status": "ok", "version": __version__}
+    def health(svc: VerificationService = Depends(get_service)) -> dict:
+        cal = svc.calibration
+        return {
+            "status": "ok",
+            "version": __version__,
+            "calibrated": cal is not None,
+            "channels": sorted(cal.thresholds) if cal else [],
+        }
 
     @app.post("/v1/voiceprints/{user_id}", status_code=201, dependencies=[Depends(require_api_key)])
     def enroll(

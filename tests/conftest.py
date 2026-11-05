@@ -54,6 +54,7 @@ def settings() -> Settings:
     return Settings(
         encryption_key=generate_key(),
         api_key="test-key",
+        allow_uncalibrated=True,  # explicit development mode for the raw-score tests
         threshold=0.8,
         min_enroll_speech_s=6.0,
         min_verify_speech_s=2.0,

@@ -9,6 +9,9 @@ dist/
 # secrets and local state
 .env
 .models/
+config/
+calibration.json
+cohort.npz
 
 # never commit voice recordings
 data/
