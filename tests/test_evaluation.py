@@ -136,3 +136,37 @@ def test_add_noise_hits_requested_snr():
     y = add_noise(x, noise, snr_db=10, rng=rng)
     snr = 10 * np.log10(np.mean(x**2) / np.mean((y - x) ** 2))
     assert snr == pytest.approx(10, abs=0.1)
+
+
+def test_spontaneous_loader_and_single_split_protocol(tmp_path):
+    from evaluation.manifest import load_cv_spontaneous
+
+    root = tmp_path / "sps-corpus-x-el-CY"
+    (root / "audios").mkdir(parents=True)
+    rows = []
+    for s in range(3):
+        for k in range(6):
+            name = f"spontaneous-{s}-{k}.mp3"
+            sf.write(
+                root / "audios" / name, synth_voice(150 + 200 * s, 2.0, seed=k), SR, format="WAV"
+            )
+            rows.append(
+                {
+                    "client_id": f"c{s}",
+                    "audio_file": name,
+                    "duration_ms": "2000",
+                    "prompt_id": f"p{k}",
+                    "votes": "0" if k == 5 else "1",
+                    "age": "twenties",
+                    "gender": "female_feminine",
+                }
+            )
+    pd.DataFrame(rows).to_csv(root / "ss-corpus-el-CY.tsv", sep="\t", index=False)
+
+    m = load_cv_spontaneous(root)
+    assert len(m) == 15  # unvalidated clips dropped
+    assert set(m.gender) == {"female"}
+
+    p = build_protocol(m, ProtocolConfig(max_probes=20, calib_fraction=0.0))
+    assert set(p.trials.split) == {"test"}
+    assert p.trials.target.sum() == 3 * 2 and (~p.trials.target).sum() == 3 * 2 * 2

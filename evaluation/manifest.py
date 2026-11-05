@@ -59,3 +59,31 @@ def load_commonvoice(root: Path, split_file: str = "validated.tsv") -> pd.DataFr
 def _mode_or_nan(s: pd.Series):
     m = s.dropna().mode()
     return m.iat[0] if len(m) else float("nan")
+
+
+def load_cv_spontaneous(root: Path) -> pd.DataFrame:
+    """Common Voice Spontaneous Speech folder (``sps-corpus-*``): one TSV, ``audios/``.
+
+    Only validated clips (``votes >= 1``) are kept.
+    """
+    root = Path(root)
+    tsv = next(root.glob("ss-corpus-*.tsv"))
+    df = _read_tsv(tsv)
+    df = df[df["votes"].astype(float) >= 1]
+    out = pd.DataFrame(
+        {
+            "utt_id": df["audio_file"].str.replace(r"\.mp3$", "", regex=True),
+            "path": [str(root / "audios" / f) for f in df["audio_file"]],
+            "speaker": df["client_id"],
+            "gender": df["gender"].map(_GENDER),
+            "age": df["age"],
+            "duration_s": df["duration_ms"].astype(float) / 1000.0,
+            "sentence_id": df["prompt_id"],
+            "dataset": f"commonvoice-sps:{root.name}",
+        }
+    )
+    out["gender"] = out.groupby("speaker")["gender"].transform(_mode_or_nan)
+    out["age"] = out.groupby("speaker")["age"].transform(_mode_or_nan)
+    if out["utt_id"].duplicated().any():
+        raise ValueError("duplicate clip paths in manifest")
+    return out[COLUMNS].reset_index(drop=True)

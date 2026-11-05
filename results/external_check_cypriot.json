@@ -1,0 +1,88 @@
+{
+  "dataset": "commonvoice-sps:sps-corpus-5.0-2026-09-11-el-CY",
+  "frozen_on": "Greek Common Voice 27.0, 118 development speakers",
+  "thresholds": {
+    "M3": {
+      "wideband": 2.2985,
+      "narrowband": 1.6818
+    },
+    "M1": {
+      "wideband": 0.4118,
+      "narrowband": 0.3476
+    }
+  },
+  "protocol": {
+    "n_enroll": 3,
+    "min_probes": 2,
+    "max_probes": 20,
+    "calib_fraction": 0.0,
+    "seed": 20261105,
+    "speakers": 10,
+    "probes": 200,
+    "target_trials": 200,
+    "nontarget_trials": 1800
+  },
+  "gross_far_bound": 0.05,
+  "conditions": {
+    "clean": {
+      "detected_channels": {
+        "wideband": 200
+      },
+      "M3": {
+        "far": {
+          "value": 0.0711,
+          "low": 0.0461,
+          "high": 0.0956
+        },
+        "frr": {
+          "value": 0.015,
+          "low": 0.0,
+          "high": 0.045
+        }
+      },
+      "M1_reference": {
+        "far": {
+          "value": 0.0422,
+          "low": 0.0222,
+          "high": 0.0633
+        },
+        "frr": {
+          "value": 0.015,
+          "low": 0.0,
+          "high": 0.045
+        }
+      },
+      "verdict_M3": "inconclusive"
+    },
+    "narrowband": {
+      "detected_channels": {
+        "narrowband": 200
+      },
+      "M3": {
+        "far": {
+          "value": 0.0656,
+          "low": 0.0222,
+          "high": 0.1245
+        },
+        "frr": {
+          "value": 0.025,
+          "low": 0.005,
+          "high": 0.06
+        }
+      },
+      "M1_reference": {
+        "far": {
+          "value": 0.0378,
+          "low": 0.0072,
+          "high": 0.0856
+        },
+        "frr": {
+          "value": 0.065,
+          "low": 0.02,
+          "high": 0.125
+        }
+      },
+      "verdict_M3": "inconclusive"
+    }
+  }
+}

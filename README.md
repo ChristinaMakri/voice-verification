@@ -234,6 +234,14 @@ some questions and too few for others. We report only the first kind:
 | Whether a calibrated threshold transfers to unseen speakers | **Real phone networks.** Codecs are simulated. Packet loss, echo cancellation, AGC and handsets are not. |
 | | **Conversational speech.** Clips are short read sentences (median ≈4 s), so results are likely optimistic for real calls. |
 
+**External check** ([docs/external-check-cypriot.md](docs/external-check-cypriot.md)):
+the system was frozen on Greek Common Voice and applied unchanged to 10 Cypriot
+Greek speakers answering questions spontaneously (about 27 s clips). The
+pre-registered outcome is *inconclusive*: 10 speakers are too few. FAR came out
+at about 7% against a 1% target, which indicates that thresholds and the
+AS-norm cohort must be re-built for each deployment domain. Channel detection
+was 400/400 correct.
+
 Known protocol caveats:
 
 - Three enrollment clips give 7–20 s of audio, silence included, so a few

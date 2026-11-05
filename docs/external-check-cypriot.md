@@ -58,4 +58,36 @@ its intervals should be read as indicative.
 
 ## Results
 
-*(filled in after the run)*
+Source: `results/external_check_cypriot.json`. 10 speakers, 200 target and
+1,800 non-target trials. The system was frozen on Greek Common Voice.
+
+| Condition | Method | FAR (target 1%) | FRR |
+|---|---|---|---|
+| clean | **M3** | **7.1%** [4.6–9.6] | 1.5% [0.0–4.5] |
+| clean | M1 (reference) | 4.2% [2.2–6.3] | 1.5% [0.0–4.5] |
+| narrowband | **M3** | **6.6%** [2.2–12.5] | 2.5% [0.5–6.0] |
+| narrowband | M1 (reference) | 3.8% [0.7–8.6] | 6.5% [2.0–12.5] |
+
+**Pre-registered outcome: inconclusive in both conditions.** On clean audio
+the lower bound (4.6%) falls just short of the 5% gross-failure bound. On
+narrowband the interval spans 2–12%.
+
+Descriptive observations. These are not conclusions: the bootstrap over 10
+speakers is itself unreliable.
+
+- **The frozen calibration does not appear to hold here.** Point estimates
+  are about 7× the 1% target, and on clean audio the interval stays well above
+  1%. This is consistent with the study's first conclusion: recalibrate for
+  each deployment domain. Dialect, speaking style (spontaneous vs. read) and
+  clip length (about 27 s vs. 4 s) all changed at once, and the check cannot
+  separate them.
+- **AS-norm with an out-of-domain cohort did not help** (7.1% vs. 4.2% for raw
+  scores; the intervals overlap). One plausible reason is that the cohort is
+  short read Greek sentences, so the probe-side statistics are measured
+  against the wrong reference. Hypothesis for future work: the cohort must
+  match the deployment domain.
+- **Genuine users are rejected less often** (FRR 1.5% vs. 4.3% on Common
+  Voice), likely because long clips give more stable embeddings. The whole
+  score distribution shifted, which is what breaks a fixed threshold.
+- **Channel detection** classified 200/200 clean probes as wideband and
+  200/200 simulated-telephone probes as narrowband, on data it had never seen.
